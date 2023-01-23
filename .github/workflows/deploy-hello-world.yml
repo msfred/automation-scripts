@@ -1,0 +1,32 @@
+name: Deploy Hello World
+
+on:
+  push:
+    branches: [ "main" ]
+    paths: "scripts/hello-world.ps1"
+
+  pull_request:
+    branches: [ "main" ]
+    paths: "scripts/hello-world.ps1"
+
+  workflow_dispatch:
+
+env:
+  automationAccountName: att-demo
+  resourceGroupName: rg-att-demo
+  runbookName: Hello-World
+  script: hello-world.ps1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy Script to Azure Automation as a Runbook
+        shell: pwsh
+        run: |
+          echo Deploying ${{ env.script }} to Azure Automation as a Runbook
+          Import-AzAutomationRunbook -Path ./scripts/${{ env.script }} -Name ${{ env.runbookName }} -Type PowerShell -AutomationAccountName ${{ env.automationAccountName }} -ResourceGroupName ${{ env.resourceGroupName }} -Force
+          Publish-AzAutomationRunbook -Name $runbookName -AutomationAccountName $automationAccountName -ResourceGroupName $resourceGroupName
