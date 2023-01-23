@@ -23,6 +23,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Install Az.Automation PowerShell module
+        shell: pwsh
+        run: Install-Module Az.Automation
 
       - name: Deploy Script to Azure Automation as a Runbook
         shell: pwsh
