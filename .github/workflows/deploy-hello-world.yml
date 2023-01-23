@@ -18,7 +18,8 @@ env:
   script: hello-world.ps1
 
 jobs:
-  build:
+  deploy:
+    name: Deploy Script to Azure Automation as a Runbook
     runs-on: ubuntu-latest
 
     steps:
@@ -26,7 +27,7 @@ jobs:
       
       - name: Install Az.Automation PowerShell module
         shell: pwsh
-        run: Install-Module Az.Automation
+        run: Install-Module Az.Automation -Force
 
       - name: Deploy Script to Azure Automation as a Runbook
         shell: pwsh
