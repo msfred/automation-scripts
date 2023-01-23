@@ -19,7 +19,7 @@ env:
 
 jobs:
   deploy:
-    name: Deploy Script to Azure Automation as a Runbook
+    name: Deploy Script
     runs-on: ubuntu-latest
 
     steps:
@@ -32,6 +32,6 @@ jobs:
       - name: Deploy Script to Azure Automation as a Runbook
         shell: pwsh
         run: |
-          echo Deploying ${{ env.script }} to Azure Automation as a Runbook
+          echo "Deploying ${{ env.script }} to Azure Automation as a Runbook"
           Import-AzAutomationRunbook -Path ./scripts/${{ env.script }} -Name ${{ env.runbookName }} -Type PowerShell -AutomationAccountName ${{ env.automationAccountName }} -ResourceGroupName ${{ env.resourceGroupName }} -Force
           Publish-AzAutomationRunbook -Name $runbookName -AutomationAccountName $automationAccountName -ResourceGroupName $resourceGroupName
