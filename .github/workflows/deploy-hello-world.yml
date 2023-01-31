@@ -50,16 +50,25 @@ jobs:
             az automation runbook publish --automation-account-name ${{ env.automationAccountName }} -n ${{ env.runbookName }}
           
       
+      - name: Set up PowerShell module cache
+        id: ps-module-cache
+        uses: actions/cache@v3
+        with:
+          path: "~/.local/share/powershell/Modules"
+          key: ${{ runner.os }}-az-automation
+      
       - name: Install Az.Automation PowerShell module
-        if: false
+        if: steps.ps-module-cache.outputs.cache-hit != 'true'
         shell: pwsh
-        run: Install-Module Az.Automation -Force
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module Az.Automation
 
       - name: Deploy Script to Azure Automation as a Runbook
-        if: false
+        #if: false
         shell: pwsh
         run: |
           echo "Deploying ${{ env.script }} to Azure Automation as a Runbook"
-          Connect-
-          Import-AzAutomationRunbook -Path ./scripts/${{ env.script }} -Name ${{ env.runbookName }} -Type PowerShell -AutomationAccountName ${{ env.automationAccountName }} -ResourceGroupName ${{ env.resourceGroupName }} -Force
+          Connect-AzAccount 
+          #Import-AzAutomationRunbook -Path ./scripts/${{ env.script }} -Name ${{ env.runbookName }} -Type PowerShell -AutomationAccountName ${{ env.automationAccountName }} -ResourceGroupName ${{ env.resourceGroupName }} -Force
           Publish-AzAutomationRunbook -Name ${{ env.runbookName }} -AutomationAccountName ${{ env.automationAccountName }} -ResourceGroupName ${{ env.resourceGroupName }}
