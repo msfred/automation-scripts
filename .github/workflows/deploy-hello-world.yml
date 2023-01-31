@@ -43,7 +43,7 @@ jobs:
       - name: Deploy Script to Azure Automation as a Runbook
         uses: azure/cli@v1
         with:
-          incline-script: az automation runbook replace-content -g ${{ env.resourceGroupName }} --automation-account-name ${{ env.automationAccountName }} -n ${{ env.runbookName }} --content ./scripts/${{ env.script }}
+          inlineScript: az automation runbook replace-content -g ${{ env.resourceGroupName }} --automation-account-name ${{ env.automationAccountName }} -n ${{ env.runbookName }} --content ./scripts/${{ env.script }}
           
       
       - name: Install Az.Automation PowerShell module
