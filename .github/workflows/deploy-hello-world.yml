@@ -11,6 +11,9 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  id-token: write
+
 env:
   automationAccountName: att-demo
   resourceGroupName: rg-att-demo
