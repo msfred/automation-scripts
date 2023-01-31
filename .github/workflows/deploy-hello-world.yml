@@ -35,11 +35,24 @@ jobs:
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
       
+      - name: Debug
+        run: |
+          dir
+          dir ./scripts
+
+      - name: Deploy Script to Azure Automation as a Runbook
+        uses: azure/cli@v1
+        with:
+          incline-script: az automation runbook replace-content -g ${{ env.resourceGroupName }} --automation-account-name ${{ env.automationAccountName }} -n ${{ env.runbookName }} --content ./scripts/${{ env.script }}
+          
+      
       - name: Install Az.Automation PowerShell module
+        if: false
         shell: pwsh
         run: Install-Module Az.Automation -Force
 
       - name: Deploy Script to Azure Automation as a Runbook
+        if: false
         shell: pwsh
         run: |
           echo "Deploying ${{ env.script }} to Azure Automation as a Runbook"
