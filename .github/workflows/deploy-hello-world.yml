@@ -45,7 +45,9 @@ jobs:
         with:
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
-            az automation runbook replace-content -g ${{ env.resourceGroupName }} --automation-account-name ${{ env.automationAccountName }} -n ${{ env.runbookName }} --content ./scripts/${{ env.script }}
+            az config set defaults.group=${{ env.resourceGroupName }}
+            az automation runbook replace-content --automation-account-name ${{ env.automationAccountName }} -n ${{ env.runbookName }} --content ./scripts/${{ env.script }}
+            az automation runbook publish --automation-account-name ${{ env.automationAccountName }} -n ${{ env.runbookName }}
           
       
       - name: Install Az.Automation PowerShell module
@@ -58,5 +60,6 @@ jobs:
         shell: pwsh
         run: |
           echo "Deploying ${{ env.script }} to Azure Automation as a Runbook"
+          Connect-
           Import-AzAutomationRunbook -Path ./scripts/${{ env.script }} -Name ${{ env.runbookName }} -Type PowerShell -AutomationAccountName ${{ env.automationAccountName }} -ResourceGroupName ${{ env.resourceGroupName }} -Force
           Publish-AzAutomationRunbook -Name ${{ env.runbookName }} -AutomationAccountName ${{ env.automationAccountName }} -ResourceGroupName ${{ env.resourceGroupName }}
