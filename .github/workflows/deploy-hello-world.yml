@@ -34,4 +34,4 @@ jobs:
         run: |
           echo "Deploying ${{ env.script }} to Azure Automation as a Runbook"
           Import-AzAutomationRunbook -Path ./scripts/${{ env.script }} -Name ${{ env.runbookName }} -Type PowerShell -AutomationAccountName ${{ env.automationAccountName }} -ResourceGroupName ${{ env.resourceGroupName }} -Force
-          Publish-AzAutomationRunbook -Name $runbookName -AutomationAccountName $automationAccountName -ResourceGroupName $resourceGroupName
+          Publish-AzAutomationRunbook -Name ${{ env.runbookName }} -AutomationAccountName ${{ env.automationAccountName }} -ResourceGroupName ${{ env.resourceGroupName }}
