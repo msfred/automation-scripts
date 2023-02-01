@@ -37,32 +37,17 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set up PowerShell module cache
-      id: ps-module-cache
-      uses: actions/cache@v3
-      with:
-        path: "~/.local/share/powershell/Modules"
-        key: ${{ runner.os }}-az-automation
-
     # Install the PowerShell dependencies
     - name: Install Az.Automation PowerShell module
-      if: steps.ps-module-cache.outputs.cache-hit != 'true'
-      shell: pwsh
-      run: |
-        Set-PSRepository PSGallery -InstallationPolicy Trusted
-        Install-Module Az.Automation
+      uses: ./.github/actions/install-automation-module
 
     # Log in to Azure
     - name: Log in to Azure
-      shell: pwsh
-      run: |
-        echo "Logging in to Azure"
-        $username = "${{ inputs.azureClientId }}"
-        $password = ${env:CLIENT_SECRET} | ConvertTo-SecureString -AsPlainText -Force
-        $credential = New-Object System.Management.Automation.PSCredential($username, $password)
-        Connect-AzAccount -ServicePrincipal -Tenant ${{ inputs.azureTenantId }} -Credential $credential
-      env:
-        CLIENT_SECRET: ${{ inputs.azureClientSecret }}
+      uses: ./.github/actions/azure-login
+      with:
+        azureClientId: ${{ inputs.azureClientId }}
+        azureClientSecret: ${{ inputs.azureClientSecret }}
+        azureTenantId: ${{ inputs.azureTenantId }}
 
     # Deploy script to Azure Automation
     - name: Deploy Script to Azure Automation as a Runbook
