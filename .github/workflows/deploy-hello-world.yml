@@ -4,12 +4,14 @@ on:
   # Trigger on push to main branch
   push:
     branches: [ "main" ]
-    paths: "scripts/hello-world.ps1"
+    paths:
+      - 'scripts/hello-world.ps1'
 
   # Trigger on a Pull Request
   pull_request:
     branches: [ "main" ]
-    paths: "scripts/hello-world.ps1"
+    paths:
+      - 'scripts/hello-world.ps1'
 
   # Manually Trigger
   workflow_dispatch:
