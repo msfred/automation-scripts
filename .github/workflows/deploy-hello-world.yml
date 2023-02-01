@@ -41,7 +41,7 @@ jobs:
 
         
       - name: Deploy Script to Azure Automation Runbook
-        uses: ./.github/actions/deploy-azure-automation-runbook@initial
+        uses: ./.github/actions/deploy-azure-automation-runbook
         with:
           automationAccountName: ${{ vars.AUTOMATION_ACCOUNT_NAME }}
           azureClientId: ${{ vars.AZURE_CLIENT_ID }}
