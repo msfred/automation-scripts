@@ -25,11 +25,14 @@ inputs:
   runbookName:
     description: 'Name of the Runbook in Azure Automation'
     required: true
+    
+  scheduleName:
+    description: 'Name of the Azure Automation Schedule to register the Runbook for'
+    required: false
 
   scriptPath:
     description: 'Path to the script to be deployed'
-    required: false
-    default: Production
+    required: true
 
 runs:
   using: composite
@@ -68,3 +71,10 @@ runs:
         echo "Deploying ${{ inputs.scriptPath }} to Azure Automation as a Runbook"
         Import-AzAutomationRunbook -Path ${{ inputs.scriptPath }} -Name ${{ inputs.runbookName }} -Type PowerShell -AutomationAccountName ${{ inputs.automationAccountName }} -ResourceGroupName ${{ inputs.resourceGroupName }} -Force
         Publish-AzAutomationRunbook -Name ${{ inputs.runbookName }} -AutomationAccountName ${{ inputs.automationAccountName }} -ResourceGroupName ${{ inputs.resourceGroupName }}
+
+    # Register the Runbook with a Schedule
+    - name: Register Runbook with a Schedule
+      shell: pwsh
+      run: |
+        echo "Registering ${{ inputs.runbookName }} with ${{ inputs.scheduleName }} schedule"
+        Register-AzAutomationScheduledRunbook -ResourceGroupName ${{ inputs.resourceGroupName }} -AutomationAccountName ${{ inputs.automationAccountName }} -RunbookName ${{ inputs.runbookName }} -ScheduleName ${{ inputs.scheduleName}}
