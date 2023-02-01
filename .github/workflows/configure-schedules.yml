@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        
       # Install the PowerShell dependencies
       - name: Install Az.Automation PowerShell module
         uses: ./.github/actions/install-automation-module
