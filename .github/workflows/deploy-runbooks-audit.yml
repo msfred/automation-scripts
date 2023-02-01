@@ -25,10 +25,10 @@ jobs:
         include:
           - runbookName: Hello-World
             scriptPath: './Audit/hello-world.ps1'
-            schedule: Daily
+            schedule: 'Daily 6am UTC'
           - runbookName: Goodbye-World
             scriptPath: './Audit/goodbye-world.ps1'
-            schedule: Weekly
+            schedule: 'Weekly on Monday 6am UTC'
 
     # Deploy the Scripts / Runbooks to Azure Automation
     steps:
