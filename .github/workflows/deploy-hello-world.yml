@@ -76,7 +76,7 @@ jobs:
         shell: pwsh
         run: |
           echo "Deploying ${{ env.script }} to Azure Automation as a Runbook"
-          $secureSecret = $CLIENT_SECRET | ConvertTo-SecureString -AsPlainText -Force
+          $secureSecret = ${env:CLIENT_SECRET} | ConvertTo-SecureString -AsPlainText -Force
           $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ${{ vars.AZURE_CLIENT_ID }}, $secureSecret
           Connect-AzAccount -ServicePrincipal -Tenant ${{ vars.AZURE_TENANT_ID }} -Credential $Credential
           #Import-AzAutomationRunbook -Path ./scripts/${{ env.script }} -Name ${{ env.runbookName }} -Type PowerShell -AutomationAccountName ${{ env.automationAccountName }} -ResourceGroupName ${{ env.resourceGroupName }} -Force
