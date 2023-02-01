@@ -27,8 +27,21 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: Debug
+        run: |
+          dir
+          echo '---'
+          dir scripts
+          echo '---'
+          dir .github
+          echo '---'
+          dir .github/actions
+          echo '---'
+          dir .github/actions/deploy-azure-automation-runbook
+
+        
       - name: Deploy Script to Azure Automation Runbook
-        uses: ./.github/actions/deploy-azure-automation-runbook@initial
+        uses: .github/actions/deploy-azure-automation-runbook@initial
         with:
           automationAccountName: ${{ vars.AUTOMATION_ACCOUNT_NAME }}
           azureClientId: ${{ vars.AZURE_CLIENT_ID }}
