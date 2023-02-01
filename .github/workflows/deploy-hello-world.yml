@@ -19,6 +19,7 @@ jobs:
     name: Deploy Script
     runs-on: ubuntu-latest
     
+    # Configure settings for each Script / Runbook
     strategy:
       matrix:
         include:
@@ -29,6 +30,7 @@ jobs:
             scriptPath: './scripts/goodbye-world.ps1'
             schedule: Weekly
 
+    # Deploy the Scripts / Runbooks to Azure Automation
     steps:
       - name: Check out code
         uses: actions/checkout@v3
