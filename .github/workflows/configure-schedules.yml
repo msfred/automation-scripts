@@ -17,34 +17,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up PowerShell module cache
-        id: ps-module-cache
-        uses: actions/cache@v3
-        with:
-          path: "~/.local/share/powershell/Modules"
-          key: ${{ runner.os }}-az-automation
-
       # Install the PowerShell dependencies
       - name: Install Az.Automation PowerShell module
-        if: steps.ps-module-cache.outputs.cache-hit != 'true'
-        shell: pwsh
-        run: |
-          Set-PSRepository PSGallery -InstallationPolicy Trusted
-          Install-Module Az.Automation
+        uses: ./.github/actions/install-automation-module
 
       # Log in to Azure
       - name: Log in to Azure
-        shell: pwsh
-        run: |
-          echo "Logging in to Azure"
-          $username = "${{ vars.AZURE_CLIENT_ID }}"
-          $password = ${env:CLIENT_SECRET} | ConvertTo-SecureString -AsPlainText -Force
-          $credential = New-Object System.Management.Automation.PSCredential($username, $password)
-          Connect-AzAccount -ServicePrincipal -Tenant ${{ vars.AZURE_TENANT_ID }} -Credential $credential
-        env:
-          CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        uses: ./.github/actions/azure-login
+        with:
+          azureClientId: ${{ vars.AZURE_CLIENT_ID }}
+          azureClientSecret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          azureTenantId: ${{ vars.AZURE_TENANT_ID }}
 
-      - name: Create Daily Schedule
+      # Create Azure Automation Schedules
+      - name: Create Azure Automation Schedules
         shell: pwsh
         run: |
           $StartTime = (Get-Date "6:00:00").AddDays(1)
