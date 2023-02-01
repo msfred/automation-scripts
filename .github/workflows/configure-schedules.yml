@@ -16,6 +16,17 @@ jobs:
       - name: Create Daily Schedule
         run: |
           $StartTime = (Get-Date "6:00:00").AddDays(1)
+          [System.DayOfWeek[]]$WeekDays = @([System.DayOfWeek]::Monday)
+
+      - name: Create Daily Schedule
+        run: |
+          $StartTime = (Get-Date "6:00:00").AddDays(1)
+          New-AzAutomationSchedule -ResourceGroupName ${{ vars.AUTOMATION_RESOURCE_GROUP_NAME }} -AutomationAccountName ${{ vars.AUTOMATION_ACCOUNT_NAME }} -Name "Daily 6am UTC" -Description "Executes daily at 6am UTC" -DayInterval 1 -StartTime $StartTime
+
+      - name: Create Daily Schedule
+        if: false
+        run: |
+          $StartTime = (Get-Date "6:00:00").AddDays(1)
           New-AzAutomationSchedule -ResourceGroupName ${{ vars.AUTOMATION_RESOURCE_GROUP_NAME }} -AutomationAccountName ${{ vars.AUTOMATION_ACCOUNT_NAME }} -Name "Daily 6am UTC" -Description "Executes daily at 6am UTC" -DayInterval 1 -StartTime $StartTime
           [System.DayOfWeek[]]$WeekDays = @([System.DayOfWeek]::Monday)
           New-AzAutomationSchedule -ResourceGroupName ${{ vars.AUTOMATION_RESOURCE_GROUP_NAME }} -AutomationAccountName ${{ vars.AUTOMATION_ACCOUNT_NAME }} -Name "Weekly on Monday 6am UTC" -Description "Executes weekly on Monday at 6am UTC" -WeekInterval 1 -StartTime $StartTime -DaysOfWeek $WeekDays
