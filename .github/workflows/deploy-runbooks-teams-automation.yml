@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - runbookName: Team-Automation-Sample
+          - runbookName: TeamsAutomation-Sample
             scriptPath: './TeamsAutomation/sample.ps1'
             schedule: 'Daily 6am UTC'
 
