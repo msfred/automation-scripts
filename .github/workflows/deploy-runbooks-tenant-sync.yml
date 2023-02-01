@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - runbookName: Tenant-Sync-Sample
+          - runbookName: TenantSync-Sample
             scriptPath: './TenantSync/sample.ps1'
             schedule: 'Daily 6am UTC'
 
