@@ -69,6 +69,7 @@ jobs:
         shell: pwsh
         run: |
           echo "Deploying ${{ env.script }} to Azure Automation as a Runbook"
-          Connect-AzAccount -Subscription ${{ vars.AZURE_SUBSCRIPTION_ID }} -Tenant ${{ vars.AZURE_TENANT_ID }} -ApplicationId ${{ vars.AZURE_CLIENT_ID }} -FederatedToken GitHub_MsFred_Automation-Scripts_PR
+          $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ${{ vars.AZURE_CLIENT_ID }}, ${{ secrets.AZURE_CLIENT_SECRET }}
+          Connect-AzAccount -ServicePrincipal -Tenant ${{ vars.AZURE_TENANT_ID }} -Credential $Credential
           #Import-AzAutomationRunbook -Path ./scripts/${{ env.script }} -Name ${{ env.runbookName }} -Type PowerShell -AutomationAccountName ${{ env.automationAccountName }} -ResourceGroupName ${{ env.resourceGroupName }} -Force
           Publish-AzAutomationRunbook -Name ${{ env.runbookName }} -AutomationAccountName ${{ env.automationAccountName }} -ResourceGroupName ${{ env.resourceGroupName }}
