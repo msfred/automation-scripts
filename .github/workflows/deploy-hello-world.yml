@@ -28,19 +28,25 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      # Log in to Azure
-      - uses: azure/login@v1
-        with:
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      
       - name: Debug
         run: |
           dir
           dir ./scripts
 
+
+      # Azure CLI Approach
+
+      # Log in to Azure
+      - name: Log in to Azure
+        uses: azure/login@v1
+        if: false
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
       - name: Deploy Script to Azure Automation as a Runbook
+        if: false
         uses: azure/cli@v1
         with:
           inlineScript: |
@@ -49,7 +55,8 @@ jobs:
             az automation runbook replace-content --automation-account-name ${{ env.automationAccountName }} -n ${{ env.runbookName }} --content ./scripts/${{ env.script }}
             az automation runbook publish --automation-account-name ${{ env.automationAccountName }} -n ${{ env.runbookName }}
           
-      
+          
+      # PowerShell Approach
       - name: Set up PowerShell module cache
         id: ps-module-cache
         uses: actions/cache@v3
@@ -69,10 +76,10 @@ jobs:
         shell: pwsh
         run: |
           echo "Deploying ${{ env.script }} to Azure Automation as a Runbook"
-          $secureSecret = $clientSecret | ConvertTo-SecureString -AsPlainText -Force
+          $secureSecret = $CLIENT_SECRET | ConvertTo-SecureString -AsPlainText -Force
           $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ${{ vars.AZURE_CLIENT_ID }}, $secureSecret
           Connect-AzAccount -ServicePrincipal -Tenant ${{ vars.AZURE_TENANT_ID }} -Credential $Credential
           #Import-AzAutomationRunbook -Path ./scripts/${{ env.script }} -Name ${{ env.runbookName }} -Type PowerShell -AutomationAccountName ${{ env.automationAccountName }} -ResourceGroupName ${{ env.resourceGroupName }} -Force
           Publish-AzAutomationRunbook -Name ${{ env.runbookName }} -AutomationAccountName ${{ env.automationAccountName }} -ResourceGroupName ${{ env.resourceGroupName }}
         env:
-          clientSecret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
