@@ -25,46 +25,41 @@ inputs:
   runbookName:
     description: 'Name of the Runbook in Azure Automation'
     required: true
+    
+  scheduleName:
+    description: 'Name of the Azure Automation Schedule to register the Runbook for'
+    required: false
 
   scriptPath:
     description: 'Path to the script to be deployed'
-    required: false
-    default: Production
+    required: true
 
 runs:
   using: composite
   steps:
-    - name: Set up PowerShell module cache
-      id: ps-module-cache
-      uses: actions/cache@v3
-      with:
-        path: "~/.local/share/powershell/Modules"
-        key: ${{ runner.os }}-az-automation
-
     # Install the PowerShell dependencies
     - name: Install Az.Automation PowerShell module
-      if: steps.ps-module-cache.outputs.cache-hit != 'true'
-      shell: pwsh
-      run: |
-        Set-PSRepository PSGallery -InstallationPolicy Trusted
-        Install-Module Az.Automation
+      uses: ./.github/actions/install-automation-module
 
     # Log in to Azure
     - name: Log in to Azure
-      shell: pwsh
-      run: |
-        echo "Logging in to Azure"
-        $username = "${{ inputs.azureClientId }}"
-        $password = ${env:CLIENT_SECRET} | ConvertTo-SecureString -AsPlainText -Force
-        $credential = New-Object System.Management.Automation.PSCredential($username, $password)
-        Connect-AzAccount -ServicePrincipal -Tenant ${{ inputs.azureTenantId }} -Credential $credential
-      env:
-        CLIENT_SECRET: ${{ inputs.azureClientSecret }}
+      uses: ./.github/actions/azure-login
+      with:
+        azureClientId: ${{ inputs.azureClientId }}
+        azureClientSecret: ${{ inputs.azureClientSecret }}
+        azureTenantId: ${{ inputs.azureTenantId }}
 
     # Deploy script to Azure Automation
     - name: Deploy Script to Azure Automation as a Runbook
       shell: pwsh
       run: |
         echo "Deploying ${{ inputs.scriptPath }} to Azure Automation as a Runbook"
-        Import-AzAutomationRunbook -Path ${{ inputs.scriptPath }} -Name ${{ inputs.runbookName }} -Type PowerShell -AutomationAccountName ${{ inputs.automationAccountName }} -ResourceGroupName ${{ inputs.resourceGroupName }} -Force
-        Publish-AzAutomationRunbook -Name ${{ inputs.runbookName }} -AutomationAccountName ${{ inputs.automationAccountName }} -ResourceGroupName ${{ inputs.resourceGroupName }}
+        Import-AzAutomationRunbook -Path ${{ inputs.scriptPath }} -Name "${{ inputs.runbookName }}" -Type PowerShell -AutomationAccountName ${{ inputs.automationAccountName }} -ResourceGroupName ${{ inputs.resourceGroupName }} -Force
+        Publish-AzAutomationRunbook -Name "${{ inputs.runbookName }}" -AutomationAccountName ${{ inputs.automationAccountName }} -ResourceGroupName ${{ inputs.resourceGroupName }}
+
+    # Register the Runbook with a Schedule
+    - name: Register Runbook with a Schedule
+      shell: pwsh
+      run: |
+        echo "Registering ${{ inputs.runbookName }} with ${{ inputs.scheduleName }} schedule"
+        Register-AzAutomationScheduledRunbook -ResourceGroupName ${{ inputs.resourceGroupName }} -AutomationAccountName ${{ inputs.automationAccountName }} -RunbookName "${{ inputs.runbookName }}" -ScheduleName "${{ inputs.scheduleName}}"

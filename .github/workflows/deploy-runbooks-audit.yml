@@ -1,28 +1,31 @@
-name: Deploy Hello World Runbook
+name: Deploy Audit Runbooks
 
 on:
   # Trigger on push to main branch
   push:
     branches: [ "main" ]
-    paths: 'scripts/hello-world.ps1'
-
-  # Trigger on a Pull Request
-  pull_request:
-    branches: [ "main" ]
-    paths: 'scripts/hello-world.ps1'
+    paths: 'Audit/**'
 
   # Manually Trigger
   workflow_dispatch:
-
-env:
-  runbookName: Hello-World
-  scriptPath: './scripts/hello-world.ps1'
 
 jobs:
   deploy:
     name: Deploy Script
     runs-on: ubuntu-latest
+    
+    # Configure settings for each Script / Runbook
+    strategy:
+      matrix:
+        include:
+          - runbookName: Hello-World
+            scriptPath: './Audit/hello-world.ps1'
+            schedule: 'Daily 6am UTC'
+          - runbookName: Goodbye-World
+            scriptPath: './Audit/goodbye-world.ps1'
+            schedule: 'Weekly on Monday 6am UTC'
 
+    # Deploy the Scripts / Runbooks to Azure Automation
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -35,5 +38,6 @@ jobs:
           azureClientSecret: ${{ secrets.AZURE_CLIENT_SECRET }}
           azureTenantId: ${{ vars.AZURE_TENANT_ID }}
           resourceGroupName: ${{ vars.AUTOMATION_RESOURCE_GROUP_NAME }}
-          runbookName: ${{ env.runbookName }}
-          scriptPath: ${{ env.scriptPath }}
+          runbookName: ${{ matrix.runbookName }}
+          scriptPath: ${{ matrix.scriptPath }}
+          scheduleName: ${{ matrix.schedule }}

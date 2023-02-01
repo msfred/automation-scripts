@@ -1,0 +1,35 @@
+name: Configure Runbook Schedules
+
+on:
+  # Manually Trigger
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy Script
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        
+      # Install the PowerShell dependencies
+      - name: Install Az.Automation PowerShell module
+        uses: ./.github/actions/install-automation-module
+
+      # Log in to Azure
+      - name: Log in to Azure
+        uses: ./.github/actions/azure-login
+        with:
+          azureClientId: ${{ vars.AZURE_CLIENT_ID }}
+          azureClientSecret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          azureTenantId: ${{ vars.AZURE_TENANT_ID }}
+
+      # Create Azure Automation Schedules
+      - name: Create Azure Automation Schedules
+        shell: pwsh
+        run: |
+          $StartTime = (Get-Date "6:00:00").AddDays(1)
+          New-AzAutomationSchedule -ResourceGroupName ${{ vars.AUTOMATION_RESOURCE_GROUP_NAME }} -AutomationAccountName ${{ vars.AUTOMATION_ACCOUNT_NAME }} -Name "Daily 6am UTC" -Description "Executes daily at 6am UTC" -DayInterval 1 -StartTime $StartTime
+          [System.DayOfWeek[]]$WeekDays = @([System.DayOfWeek]::Monday)
+          New-AzAutomationSchedule -ResourceGroupName ${{ vars.AUTOMATION_RESOURCE_GROUP_NAME }} -AutomationAccountName ${{ vars.AUTOMATION_ACCOUNT_NAME }} -Name "Weekly on Monday 6am UTC" -Description "Executes weekly on Monday at 6am UTC" -WeekInterval 1 -StartTime $StartTime -DaysOfWeek $WeekDays

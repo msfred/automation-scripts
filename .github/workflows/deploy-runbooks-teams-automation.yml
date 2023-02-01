@@ -1,0 +1,40 @@
+name: Deploy Teams Automation Runbooks
+
+on:
+  # Trigger on push to main branch
+  push:
+    branches: [ "main" ]
+    paths: 'TeamsAutomation/**'
+
+  # Manually Trigger
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy Script
+    runs-on: ubuntu-latest
+    
+    # Configure settings for each Script / Runbook
+    strategy:
+      matrix:
+        include:
+          - runbookName: TeamsAutomation-Sample
+            scriptPath: './TeamsAutomation/sample.ps1'
+            schedule: 'Daily 6am UTC'
+
+    # Deploy the Scripts / Runbooks to Azure Automation
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        
+      - name: Deploy Script to Azure Automation Runbook
+        uses: ./.github/actions/deploy-azure-automation-runbook
+        with:
+          automationAccountName: ${{ vars.AUTOMATION_ACCOUNT_NAME }}
+          azureClientId: ${{ vars.AZURE_CLIENT_ID }}
+          azureClientSecret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          azureTenantId: ${{ vars.AZURE_TENANT_ID }}
+          resourceGroupName: ${{ vars.AUTOMATION_RESOURCE_GROUP_NAME }}
+          runbookName: ${{ matrix.runbookName }}
+          scriptPath: ${{ matrix.scriptPath }}
+          scheduleName: ${{ matrix.schedule }}
