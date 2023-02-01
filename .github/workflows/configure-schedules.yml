@@ -1,0 +1,35 @@
+name: Configure Runbook Schedules
+
+on:
+  # Trigger on a Pull Request
+  pull_request:
+    branches: [ "main" ]
+    # paths: 'scripts/hello-world.ps1'
+
+  # Manually Trigger
+  workflow_dispatch:
+
+env:
+  runbookName: Hello-World
+
+jobs:
+  deploy:
+    name: Deploy Script
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        
+      - name: Create Daily Schedule
+        run: |
+          $StartTime = (Get-Date "6:00:00").AddDays(1)
+          New-AzAutomationSchedule -ResourceGroupName ${{ vars.AUTOMATION_RESOURCE_GROUP_NAME }} -AutomationAccountName ${{ vars.AUTOMATION_ACCOUNT_NAME }} -Name "Daily 6am UTC" -Description "Executes daily at 6am UTC" -DayInterval 1 -StartTime $StartTime
+          [System.DayOfWeek[]]$WeekDays = @([System.DayOfWeek]::Monday)
+          New-AzAutomationSchedule -ResourceGroupName ${{ vars.AUTOMATION_RESOURCE_GROUP_NAME }} -AutomationAccountName ${{ vars.AUTOMATION_ACCOUNT_NAME }} -Name "Weekly on Monday 6am UTC" -Description "Executes weekly on Monday at 6am UTC" -WeekInterval 1 -StartTime $StartTime -DaysOfWeek $WeekDays
+          
+      - name: Attach Runbooks to a Schedule
+        run: |
+          Register-AzAutomationScheduledRunbook -ResourceGroupName ${{ vars.AUTOMATION_RESOURCE_GROUP_NAME }} -AutomationAccountName ${{ vars.AUTOMATION_ACCOUNT_NAME }} -RunbookName ${{ env.runbookName }} -ScheduleName Daily
+          
+          
