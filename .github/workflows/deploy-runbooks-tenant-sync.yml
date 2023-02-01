@@ -6,6 +6,10 @@ on:
     branches: [ "main" ]
     paths: 'TenantSync/**'
 
+  pull_request:
+    branches: [ "main" ]
+    paths: 'TenantSync/**'
+
   # Manually Trigger
   workflow_dispatch:
 
