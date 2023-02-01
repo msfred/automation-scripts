@@ -20,6 +20,9 @@ jobs:
       - name: Create Daily Schedule
         run: |
           $StartTime = (Get-Date "6:00:00").AddDays(1)
+
+      - name: Create Daily Schedule
+        run: |
           [System.DayOfWeek[]]$WeekDays = @([System.DayOfWeek]::Monday)
 
       - name: Create Daily Schedule
