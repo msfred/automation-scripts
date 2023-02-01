@@ -1,0 +1,39 @@
+name: Deploy Hello World Runbook
+
+on:
+  # Trigger on push to main branch
+  push:
+    branches: [ "main" ]
+    paths: 'scripts/hello-world.ps1'
+
+  # Trigger on a Pull Request
+  pull_request:
+    branches: [ "main" ]
+    paths: 'scripts/hello-world.ps1'
+
+  # Manually Trigger
+  workflow_dispatch:
+
+env:
+  runbookName: Hello-World
+  scriptPath: './scripts/hello-world.ps1'
+
+jobs:
+  deploy:
+    name: Deploy Script
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        
+      - name: Deploy Script to Azure Automation Runbook
+        uses: ./.github/actions/deploy-azure-automation-runbook
+        with:
+          automationAccountName: ${{ vars.AUTOMATION_ACCOUNT_NAME }}
+          azureClientId: ${{ vars.AZURE_CLIENT_ID }}
+          azureClientSecret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          azureTenantId: ${{ vars.AZURE_TENANT_ID }}
+          resourceGroupName: ${{ vars.AUTOMATION_RESOURCE_GROUP_NAME }}
+          runbookName: ${{ env.runbookName }}
+          scriptPath: ${{ env.scriptPath }}
