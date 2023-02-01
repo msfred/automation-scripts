@@ -6,6 +6,10 @@ on:
     branches: [ "main" ]
     paths: 'TeamsAutomation/**'
 
+  pull_request:
+    branches: [ "main" ]
+    paths: 'TeamsAutomation/**'
+
   # Manually Trigger
   workflow_dispatch:
 
