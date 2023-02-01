@@ -4,24 +4,30 @@ on:
   # Trigger on push to main branch
   push:
     branches: [ "main" ]
-    paths: 'scripts/hello-world.ps1'
+    paths: 'scripts/**'
 
   # Trigger on a Pull Request
   pull_request:
     branches: [ "main" ]
-    paths: 'scripts/hello-world.ps1'
+    paths: 'scripts/**'
 
   # Manually Trigger
   workflow_dispatch:
-
-env:
-  runbookName: Hello-World
-  scriptPath: './scripts/hello-world.ps1'
 
 jobs:
   deploy:
     name: Deploy Script
     runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        include:
+          - runbookName: Hello-World
+            scriptPath: './scripts/hello-world.ps1'
+            schedule: Daily
+          - runbookName: Goodbye-World
+            scriptPath: './scripts/goodbye-world.ps1'
+            schedule: Weekly
 
     steps:
       - name: Check out code
@@ -35,5 +41,6 @@ jobs:
           azureClientSecret: ${{ secrets.AZURE_CLIENT_SECRET }}
           azureTenantId: ${{ vars.AZURE_TENANT_ID }}
           resourceGroupName: ${{ vars.AUTOMATION_RESOURCE_GROUP_NAME }}
-          runbookName: ${{ env.runbookName }}
-          scriptPath: ${{ env.scriptPath }}
+          runbookName: ${{ matrix.runbookName }}
+          scriptPath: ${{ matrix.scriptPath }}
+          schedule: ${{ matrix.schedule }}
