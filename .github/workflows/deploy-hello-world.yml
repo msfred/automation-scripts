@@ -1,4 +1,4 @@
-name: Deploy Hello World Runbook
+name: Deploy Runbooks
 
 on:
   # Trigger on push to main branch
