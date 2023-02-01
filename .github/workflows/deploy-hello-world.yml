@@ -45,4 +45,4 @@ jobs:
           resourceGroupName: ${{ vars.AUTOMATION_RESOURCE_GROUP_NAME }}
           runbookName: ${{ matrix.runbookName }}
           scriptPath: ${{ matrix.scriptPath }}
-          schedule: ${{ matrix.schedule }}
+          scheduleName: ${{ matrix.schedule }}
