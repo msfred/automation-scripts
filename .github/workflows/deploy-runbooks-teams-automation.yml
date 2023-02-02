@@ -9,6 +9,9 @@ on:
   # Manually Trigger
   workflow_dispatch:
 
+permissions:
+  id-token: write
+
 jobs:
   deploy:
     name: Deploy Script
