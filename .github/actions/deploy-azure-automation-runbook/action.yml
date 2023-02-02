@@ -17,6 +17,10 @@ inputs:
   azureTenantId:
     description: 'Azure Tenant ID'
     required: true
+    
+  subscriptionId:
+    description: 'Azure Subscription ID'
+    required: true
 
   resourceGroupName:
     description: 'Resource Group Name where Azure Automation resides'
@@ -33,7 +37,7 @@ inputs:
   scriptPath:
     description: 'Path to the script to be deployed'
     required: true
-
+    
 runs:
   using: composite
   steps:
@@ -47,7 +51,7 @@ runs:
       with:
         client-id: ${{ inputs.azureClientId }}
         tenant-id: ${{ inputs.azureTenantId }}
-        #subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+        subscription-id: ${{ inputs.subscriptionId }}
         enable-AzPSSession: true
 
     # Deploy script to Azure Automation
