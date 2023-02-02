@@ -13,13 +13,13 @@ inputs:
   azureClientSecret:
     description: 'Azure App Registration Client Secret'
     required: true
+    
+  azureSubscriptionId:
+    description: 'Azure Subscription ID'
+    required: true
 
   azureTenantId:
     description: 'Azure Tenant ID'
-    required: true
-    
-  subscriptionId:
-    description: 'Azure Subscription ID'
     required: true
 
   resourceGroupName:
