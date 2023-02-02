@@ -43,11 +43,12 @@ runs:
 
     # Log in to Azure
     - name: Log in to Azure
-      uses: ./.github/actions/azure-login
+      uses: azure/login@v1
       with:
-        azureClientId: ${{ inputs.azureClientId }}
-        azureClientSecret: ${{ inputs.azureClientSecret }}
-        azureTenantId: ${{ inputs.azureTenantId }}
+        client-id: ${{ inputs.azureClientId }}
+        tenant-id: ${{ inputs.azureTenantId }}
+        #subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+        enable-AzPSSession: true
 
     # Deploy script to Azure Automation
     - name: Deploy Script to Azure Automation as a Runbook
