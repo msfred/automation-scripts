@@ -36,6 +36,7 @@ jobs:
           automationAccountName: ${{ vars.AUTOMATION_ACCOUNT_NAME }}
           azureClientId: ${{ vars.AZURE_CLIENT_ID }}
           azureClientSecret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          azureSubscriptionId: ${{ vars.AZURE_SUBSCRIPTION_ID }}
           azureTenantId: ${{ vars.AZURE_TENANT_ID }}
           resourceGroupName: ${{ vars.AUTOMATION_RESOURCE_GROUP_NAME }}
           runbookName: ${{ matrix.runbookName }}
