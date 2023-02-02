@@ -51,7 +51,7 @@ runs:
       with:
         client-id: ${{ inputs.azureClientId }}
         tenant-id: ${{ inputs.azureTenantId }}
-        subscription-id: ${{ inputs.subscriptionId }}
+        subscription-id: ${{ inputs.azureSubscriptionId }}
         enable-AzPSSession: true
 
     # Deploy script to Azure Automation
