@@ -1,0 +1,10 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: |
+    echo Test to see an Azure DevOps Pipeline run against a GitHub repository
+  displayName: 'ADO/GH Test'
