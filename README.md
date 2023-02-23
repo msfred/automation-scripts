@@ -5,3 +5,4 @@ For example, the **Deploy Audit Runbooks workflow** (*.github/workflows/deploy-r
 
 ### Organizing Repositories
 This repository is using separate folders (ie, *Audit*, *TeamsAuthomation*, *TenantSync*) to organize the PowerShell scripts by their respective teams.  Alternatively, a separate repository per team could be created.  This approach would allow permissions to be granted to just the members of those respective teams rather than giving users access to all teams' PowerShell scripts.
+
